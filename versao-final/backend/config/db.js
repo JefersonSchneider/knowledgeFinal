@@ -1,5 +1,9 @@
-const config = require('../knexfile.js')
-const knex = require('knex')(config)
+const knex = require('knex');
 
-knex.migrate.latest([config])
-module.exports = knex
+// Carrega a configuração do ambiente 'development'
+const config = require('../knexfile').development;
+
+// Inicializa o Knex com a configuração
+const db = knex(config);
+
+module.exports = db;

@@ -1,22 +1,31 @@
-const app = require('express')()
-const consign = require('consign')
-const db = require('./config/db')
-const mongoose = require('mongoose')
+const app = require('express')();
+const consign = require('consign');
+const db = require('./config/db');
+const mongoose = require('mongoose');
 
-require('./config/mongodb')
+require('./config/mongodb');
 
-app.db = db
-app.mongoose = mongoose
+app.db = db;
+app.mongoose = mongoose;
 
-consign()
-    .include('./config/passport.js')
-    .then('./config/middlewares.js')
-    .then('./api/validation.js')
-    .then('./api')
-    .then('./schedule')
-    .then('./config/routes.js')
-    .into(app)
+// Configurações do Consign
+const consignConfig = consign()
+  .include('./config/passport.js')
+  .then('./config/middlewares.js')
+  .then('./api/validation.js')
+  .then('./api')
+  .then('./config/routes.js');
 
-app.listen(4000, () => {
-    console.log('Backend executando...')
-})
+// Condicionalmente carrega o diretório 'schedule' apenas se não for ambiente de teste
+if (process.env.NODE_ENV !== 'test') {
+  consignConfig.then('./schedule');
+}
+
+consignConfig.into(app);
+
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`Backend executando na porta ${PORT}...`);
+  });
+}

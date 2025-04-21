@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Clonar o repositório
+      - name: Clonar o repositório
         uses: actions/checkout@v3
 
-      - name: 🟢 Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -21,33 +21,33 @@ jobs:
       ##################################
       # FRONTEND - VUE
       ##################################
-      - name: 📦 Instalar dependências do frontend
+      - name: Instalar dependências do frontend
         working-directory: ./frontend
         run: npm install
 
-      - name: 🧪 Testes do frontend
+      - name: Testes do frontend
         working-directory: ./frontend
         run: npm run test --if-present
 
-      - name: 🏗️ Build do frontend
+      - name: Build do frontend
         working-directory: ./frontend
         run: npm run build
 
       ##################################
       # BACKEND - EXPRESS
       ##################################
-      - name: 📦 Instalar dependências do backend
+      - name: Instalar dependências do backend
         working-directory: ./backend
         run: npm install
 
-      - name: 🧪 Testes do backend
+      - name: Testes do backend
         working-directory: ./backend
         run: npm run test
 
       ##################################
       # DEPLOY PARA AWS EC2 (USANDO AWS CLI)
       ##################################
-      - name: 🚀 Deploy para AWS EC2
+      - name: Deploy para AWS EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}

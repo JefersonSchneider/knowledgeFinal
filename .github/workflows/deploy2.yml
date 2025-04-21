@@ -22,26 +22,26 @@ jobs:
       # FRONTEND - VUE
       ##################################
       - name: Instalar dependências do frontend
-        working-directory: ./frontend
+        working-directory: ./versao-final/frontend
         run: npm install
 
       - name: Testes do frontend
-        working-directory: ./frontend
+        working-directory: ./versao-final/frontend
         run: npm run test --if-present
 
       - name: Build do frontend
-        working-directory: ./frontend
+        working-directory: ./versao-final/frontend
         run: npm run build
 
       ##################################
       # BACKEND - EXPRESS
       ##################################
       - name: Instalar dependências do backend
-        working-directory: ./backend
+        working-directory: ./versao-final/backend
         run: npm install
 
       - name: Testes do backend
-        working-directory: ./backend
+        working-directory: ./versao-final/backend
         run: npm run test
 
       ##################################

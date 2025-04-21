@@ -31,7 +31,8 @@ jobs:
 
       - name: Build do frontend
         working-directory: ./versao-final/frontend
-        run: npm run build
+        run: |
+          NODE_OPTIONS=--openssl-legacy-provider npm run build  
 
       ##################################
       # BACKEND - EXPRESS

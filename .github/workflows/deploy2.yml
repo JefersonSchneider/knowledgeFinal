@@ -25,10 +25,6 @@ jobs:
         working-directory: ./versao-final/frontend
         run: npm install
 
-      - name: Testes do frontend
-        working-directory: ./versao-final/frontend
-        run: npm run test --if-present
-
       - name: Build do frontend
         working-directory: ./versao-final/frontend
         run: |

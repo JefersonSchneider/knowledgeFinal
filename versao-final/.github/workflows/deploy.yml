@@ -1,0 +1,69 @@
+name: CI/CD Pipeline - Vue + Express
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar o repositório
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      ##################################
+      # FRONTEND - VUE
+      ##################################
+      - name: 📦 Instalar dependências do frontend
+        working-directory: ./frontend
+        run: npm install
+
+      - name: 🧪 Testes do frontend
+        working-directory: ./frontend
+        run: npm run test --if-present
+
+      - name: 🏗️ Build do frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      ##################################
+      # BACKEND - EXPRESS
+      ##################################
+      - name: 📦 Instalar dependências do backend
+        working-directory: ./backend
+        run: npm install
+
+      - name: 🧪 Testes do backend
+        working-directory: ./backend
+        run: npm run test
+
+      ##################################
+      # DEPLOY PARA AWS EC2 (USANDO AWS CLI)
+      ##################################
+      - name: 🚀 Deploy para AWS EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Conectar ao servidor EC2 e fazer o deploy
+            cd /var/www/seu-projeto
+            git pull origin main
+
+            # Backend
+            cd backend
+            npm install
+            pm2 restart all
+
+            # Frontend
+            cd ../frontend
+            npm install
+            npm run build
+            pm2 restart all

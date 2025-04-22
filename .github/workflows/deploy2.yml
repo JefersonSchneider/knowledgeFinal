@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Vue + Express
+name: CI/CD Pipeline - Backend Express
 
 on:
   push:
@@ -19,30 +19,14 @@ jobs:
           node-version: '16.20.2'
 
       ###################################
-      # FRONTEND - VUE (Comentado)
-      ###################################
-      # - name: Instalar dependências do frontend
-      #   working-directory: ./versao-final/frontend
-      #   run: npm install
-
-      # - name: Build do frontend
-      #   working-directory: ./versao-final/frontend
-      #   run: npm run build
-
-      ###################################
       # BACKEND - EXPRESS
       ###################################
       - name: Instalar dependências do backend
         working-directory: ./versao-final/backend
         run: npm install
 
-      # Comentado para testes, será validado depois
-      # - name: Testes do backend
-      #   working-directory: ./versao-final/backend
-      #   run: npm run test
-
       ##################################
-      # DEPLOY PARA AWS EC2 (USANDO AWS CLI)
+      # DEPLOY PARA AWS EC2 (USANDO SSH)
       ##################################
       - name: Deploy para AWS EC2
         uses: appleboy/ssh-action@v0.1.6
@@ -51,17 +35,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Conectar ao servidor EC2 e fazer o deploy
+            echo "Conectado à EC2..."
             cd /var/www/seu-projeto
             git pull origin main
 
-            # Backend
-            cd backend
+            cd versao-final/backend
             npm install
             pm2 restart all
-
-            # Frontend (Comentado)
-            # cd ../frontend
-            # npm install
-            # npm run build
-            # pm2 restart all

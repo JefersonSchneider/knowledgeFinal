@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: '16.20.2'
 
-      ##################################
+      ###################################
       # FRONTEND - VUE (Comentado)
-      ##################################
+      ###################################
       # - name: Instalar dependências do frontend
       #   working-directory: ./versao-final/frontend
       #   run: npm install

@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '@/components/home/Home'
-import AdminPages from '@/components/admin/AdminPages'
-import ArticlesByCategory from '@/components/article/ArticlesByCategory'
-import ArticleById from '@/components/article/ArticleById'
-import Auth from '@/components/auth/Auth'
-
 import { userKey } from '@/global'
 
 Vue.use(VueRouter)
+
+const Home = () => import('@/components/home/Home.vue')
+const AdminPages = () => import('@/components/admin/AdminPages.vue')
+const ArticlesByCategory = () => import('@/components/article/ArticlesByCategory.vue')
+const ArticleById = () => import('@/components/article/ArticleById.vue')
+const Auth = () => import('@/components/auth/Auth.vue')
 
 const routes = [{
     name: 'home',
@@ -42,7 +42,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     const json = localStorage.getItem(userKey)
 
-    if(to.matched.some(record => record.meta.requiresAdmin)) {
+    if (to.matched.some(record => record.meta.requiresAdmin)) {
         const user = JSON.parse(json)
         user && user.admin ? next() : next({ path: '/' })
     } else {

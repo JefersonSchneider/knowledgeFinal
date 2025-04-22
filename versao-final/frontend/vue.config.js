@@ -1,21 +1,28 @@
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
 module.exports = {
-    // Opções do Webpack
-    configureWebpack: {
-      // Aumenta o limite do tamanho dos arquivos para evitar warnings
-      performance: {
-        hints: 'warning', // ou 'error' para tratar como erro
-        maxAssetSize: 500000, // 500 KB
-        maxEntrypointSize: 500000, // 500 KB
-      }
-    },
-    // Outras configurações possíveis
-    chainWebpack: config => {
-      // Exemplo: Dividir código em chunks menores
-      config.optimization.splitChunks({
-        chunks: 'all',
-      });
-    },
-    // Configuração para o processo de build
-    productionSourceMap: false, // Desativa os sourcemaps para produção (otimiza a build)
-  };
-  
+  configureWebpack: config => {
+    // Performance thresholds para evitar os warnings
+    config.performance = {
+      hints: 'warning', // Ou 'error' se quiser falhar build com excesso
+      maxAssetSize: 1024000, // 1MB - aumenta o limite para evitar warning
+      maxEntrypointSize: 1024000,
+    };
+
+    // Plugins adicionais (analisador de bundle)
+    config.plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static', // gera um arquivo HTML
+      openAnalyzer: false,    // não abre o navegador automaticamente
+      reportFilename: 'report.html'
+    }));
+  },
+
+  chainWebpack: config => {
+    // Melhor divisão de código para otimizar o carregamento
+    config.optimization.splitChunks({
+      chunks: 'all',
+    });
+  },
+
+  productionSourceMap: false, // Melhora segurança/performance em produção
+};

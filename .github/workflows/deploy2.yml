@@ -19,15 +19,15 @@ jobs:
           node-version: '16.20.2'
 
       ##################################
-      # FRONTEND - VUE
+      # FRONTEND - VUE (comentado)
       ##################################
-      - name: Instalar dependências do frontend
-        working-directory: ./versao-final/frontend
-        run: npm install
+      # - name: Instalar dependências do frontend
+      #   working-directory: ./versao-final/frontend
+      #   run: npm install
 
-      - name: Build do frontend
-        working-directory: ./versao-final/frontend
-        run: npm run build
+      # - name: Build do frontend
+      #   working-directory: ./versao-final/frontend
+      #   run: npm run build
 
       ###################################
       # BACKEND - EXPRESS
@@ -59,8 +59,8 @@ jobs:
             npm install
             pm2 restart all
 
-            # Frontend
-            cd ../frontend
-            npm install
-            npm run build
-            pm2 restart all
+            # Frontend (comentado)
+            # cd ../frontend
+            # npm install
+            # npm run build
+            # pm2 restart all

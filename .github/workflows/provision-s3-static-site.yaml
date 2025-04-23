@@ -5,6 +5,9 @@ on:
     types:
       - opened
 
+permissions:
+  issues: write  
+
 jobs:
   provision_s3_static_site:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
 
       - name: Add comment to issue
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh issue comment ${{ github.event.issue.number }} \
             --repo ${{ github.repository }} \

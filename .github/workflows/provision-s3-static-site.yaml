@@ -39,9 +39,6 @@ jobs:
     - name: Terraform Apply
       run: terraform -chdir=infra/s3-bucket-static apply -auto-approve tfplan
 
-    - name: Output Website URL
-      run: echo "Website URL: $(terraform -chdir=infra/s3-bucket-static output -raw website_url)"
-
     - name: Add comment to issue
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

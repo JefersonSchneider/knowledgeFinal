@@ -27,7 +27,7 @@ resource "aws_elastic_beanstalk_application" "backend_app" {
 resource "aws_elastic_beanstalk_environment" "backend_env" {
   name                = var.env_name
   application         = aws_elastic_beanstalk_application.backend_app.name
-  solution_stack_name = "64bit Amazon Linux 2 v4.3.12 running Node.js 16" # Ajustado para uma solution stack válida
+  solution_stack_name = "64bit Amazon Linux 2 v4.3.13 running Node.js 18" # Ajustado para uma solution stack válida
 
   # Configurações do ambiente
   setting {
@@ -40,7 +40,7 @@ resource "aws_elastic_beanstalk_environment" "backend_env" {
   setting {
     namespace = "aws:elasticbeanstalk:container:nodejs"
     name      = "NodeVersion"
-    value     = "16.20.2"
+    value     = "18.20.2"
   }
 
   # Configurações de variável de ambiente (para conectar ao MongoDB Atlas)

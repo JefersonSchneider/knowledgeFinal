@@ -16,33 +16,31 @@ jobs:
       AWS_REGION: us-east-1
 
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v2
+      - name: Checkout the repository
+        uses: actions/checkout@v2
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: "1.5.0"
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "1.5.0"
 
-    - name: Extract Bucket Name from Issue
-      run: |
-        bucket_name="${{ github.event.issue.title }}"
-        echo "Bucket name from issue title: $bucket_name"
-        echo "bucket_name=$bucket_name" >> $GITHUB_ENV
+      - name: Extract Bucket Name from Issue
+        run: |
+          bucket_name="${{ github.event.issue.title }}"
+          echo "Bucket name from issue title: $bucket_name"
+          echo "bucket_name=$bucket_name" >> $GITHUB_ENV
 
-    - name: Terraform Init
-      run: terraform -chdir=infra/s3-bucket-static init
+      - name: Terraform Init, Plan, and Apply
+        run: |
+          cd infra/s3-bucket-static
+          terraform init
+          terraform plan -var "bucket_name=${{ env.bucket_name }}" -out=tfplan
+          terraform apply -auto-approve tfplan
 
-    - name: Terraform Plan
-      run: terraform -chdir=infra/s3-bucket-static plan -var "bucket_name=${{ env.bucket_name }}" -out=tfplan
-
-    - name: Terraform Apply
-      run: terraform -chdir=infra/s3-bucket-static apply -auto-approve tfplan
-
-    - name: Add comment to issue
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh issue comment ${{ github.event.issue.number }} \
-          --repo ${{ github.repository }} \
-          --body "Bucket provisionado com sucesso com nome: **${{ env.bucket_name }}**"
+      - name: Add comment to issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --body "Bucket provisionado com sucesso com nome: **${{ env.bucket_name }}**"

@@ -27,4 +27,6 @@ jobs:
 
       - name: Rodar testes do backend
         working-directory: ./versao-final/backend
+        env:
+          AUTH_SECRET: "abc"
         run: npm test  

@@ -3,12 +3,11 @@ provider "aws" {
 }
 
 variable "bucket_name" {
-    type = string
+  type = string
 }
 
 resource "aws_s3_bucket" "static_site_bucket" {
   bucket = "static-site-${var.bucket_name}" 
-  acl    = "public-read"
 
   website {
     index_document = "index.html"
@@ -21,13 +20,21 @@ resource "aws_s3_bucket" "static_site_bucket" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "ownership" {
+  bucket = aws_s3_bucket.static_site_bucket.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "static_site_bucket" {
-    bucket = aws_s3_bucket.static_site_bucket.id    
-    
-    block_public_acls       = false
-    block_public_policy     = false
-    ignore_public_acls      = false
-    restrict_public_buckets = false
+  bucket = aws_s3_bucket.static_site_bucket.id    
+
+  block_public_acls       = true
+  block_public_policy     = false
+  ignore_public_acls      = true
+  restrict_public_buckets = false
 } 
 
 resource "aws_s3_bucket_policy" "static_site_policy" {
@@ -45,4 +52,3 @@ resource "aws_s3_bucket_policy" "static_site_policy" {
     ]
   })
 }
-

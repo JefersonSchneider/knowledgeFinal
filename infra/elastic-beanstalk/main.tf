@@ -4,47 +4,17 @@ provider "aws" {
 
 variable "app_name" {
   type    = string
-  default = "knowledge-backend2"
+  default = "knowledge-backend"
 }
 
 variable "env_name" {
   type    = string
-  default = "knowledge-backend2-env"
+  default = "knowledge-backend-env"
 }
 
 variable "mongodb_uri" {
   type      = string
   sensitive = true
-}
-
-# Cria a role IAM para o Elastic Beanstalk
-resource "aws_iam_role" "beanstalk_instance_role" {
-  name = "aws-elasticbeanstalk-ec2-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-# Anexa a política gerenciada padrão do Elastic Beanstalk à role
-resource "aws_iam_role_policy_attachment" "beanstalk_instance_policy" {
-  role       = aws_iam_role.beanstalk_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
-}
-
-# Cria o instance profile associado à role
-resource "aws_iam_instance_profile" "beanstalk_instance_profile" {
-  name = "aws-elasticbeanstalk-ec2-profile"
-  role = aws_iam_role.beanstalk_instance_role.name
 }
 
 # Cria a aplicação no Elastic Beanstalk
@@ -60,11 +30,11 @@ resource "aws_elastic_beanstalk_environment" "backend_env" {
   solution_stack_name = "64bit Amazon Linux 2023 v6.5.1 running Node.js 22"
   wait_for_ready_timeout = "30m"
 
-  # Associa o instance profile ao ambiente
+  # Associa o instance profile existente ao ambiente
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "IamInstanceProfile"
-    value     = aws_iam_instance_profile.beanstalk_instance_profile.name
+    value     = "LabInstanceProfile" # Confirmado com base na saída
   }
 
   # Configura como single instance (sem load balancer)

@@ -78,7 +78,7 @@ resource "aws_elastic_beanstalk_environment" "backend_env" {
   }
 }
 
-# Output da URL do ambiente
+# Output da URL do ambiente.
 output "environment_url" {
   value       = aws_elastic_beanstalk_environment.backend_env.endpoint_url
   description = "URL do ambiente Elastic Beanstalk"

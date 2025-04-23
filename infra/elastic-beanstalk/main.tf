@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1" 
+  region = "us-east-1"
 }
 
 variable "app_name" {
@@ -27,13 +27,20 @@ resource "aws_elastic_beanstalk_application" "backend_app" {
 resource "aws_elastic_beanstalk_environment" "backend_env" {
   name                = var.env_name
   application         = aws_elastic_beanstalk_application.backend_app.name
-  solution_stack_name = "64bit Amazon Linux 2 v4.3.9 running Node.js 16"
+  solution_stack_name = "64bit Amazon Linux 2 v4.3.11 running Node.js 16" # Ajustado para uma solution stack válida
 
   # Configurações do ambiente
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "t3.micro" # Free Tier elegível
+    value     = "t3.micro"
+  }
+
+  # Configura a versão exata do Node.js
+  setting {
+    namespace = "aws:elasticbeanstalk:container:nodejs"
+    name      = "NodeVersion"
+    value     = "16.20.2"
   }
 
   # Configurações de variável de ambiente (para conectar ao MongoDB Atlas)
@@ -43,7 +50,7 @@ resource "aws_elastic_beanstalk_environment" "backend_env" {
     value     = var.mongodb_uri
   }
 
-  # Configurações de porta (se sua API usa uma porta específica)
+  # Configurações de porta
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "PORT"

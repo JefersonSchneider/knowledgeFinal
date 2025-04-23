@@ -1,7 +1,7 @@
-name: CI/CD Pipeline - Backend Express
+name: Deploy - Backend Express
 
 on:
-  push:
+  pull-request:
     branches: [main]
   workflow_dispatch:
   

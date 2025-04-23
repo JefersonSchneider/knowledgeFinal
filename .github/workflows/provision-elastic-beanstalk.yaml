@@ -5,30 +5,30 @@ on:
     branches:
       - main
     paths:
-      - 'backend/**' # Executa o workflow apenas se houver mudanças no diretório do backend
+      - 'backend/**' 
       - '.github/workflows/provision-elastic-beanstalk.yaml'
+  workflow_dispatch:  
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout do código
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Configurar Terraform
+    
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.5.0
 
-    # Inicializar Terraform
+    
     - name: Terraform Init
       run: terraform init
       working-directory: ./infra/elastic-beanstalk
 
-    # Aplicar Terraform
+    
     - name: Terraform Apply
       run: terraform apply -auto-approve -var="mongodb_uri=${{ secrets.MONGODB_URI }}"
       working-directory: ./infra/elastic-beanstalk
@@ -37,14 +37,14 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-    # Criar ZIP do backend
+    
     - name: Create ZIP for Elastic Beanstalk
       run: |
         cd backend
         zip -r ../app.zip .
       working-directory: .
 
-    # Fazer upload do ZIP para o Elastic Beanstalk
+    
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
       with:

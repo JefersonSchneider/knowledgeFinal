@@ -51,12 +51,6 @@ resource "aws_elastic_beanstalk_environment" "backend_env" {
   }
 
   setting {
-    namespace = "aws:elasticbeanstalk:container:nodejs"
-    name      = "NodeVersion"
-    value     = "22.2.0"
-  }
-
-  setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "MONGODB_URI"
     value     = var.mongodb_uri

@@ -35,12 +35,11 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-    
+
     - name: Create ZIP for Elastic Beanstalk
       run: |
-        cd backend
-        zip -r ../app.zip .
-      working-directory: .
+        cd versao-final/backend
+        zip -r ../../app.zip .
 
     
     - name: Deploy to Elastic Beanstalk

@@ -4,12 +4,12 @@ provider "aws" {
 
 variable "app_name" {
   type    = string
-  default = "knowledge-backend"
+  default = "knowledge-backend-v2"
 }
 
 variable "env_name" {
   type    = string
-  default = "knowledge-backend-env"
+  default = "knowledge-backend-env-v2"
 }
 
 variable "mongodb_uri" {

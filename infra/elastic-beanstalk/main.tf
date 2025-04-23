@@ -27,7 +27,7 @@ resource "aws_elastic_beanstalk_application" "backend_app" {
 resource "aws_elastic_beanstalk_environment" "backend_env" {
   name                = var.env_name
   application         = aws_elastic_beanstalk_application.backend_app.name
-  solution_stack_name = "64bit Amazon Linux 2 v5.6.6 running Node.js 18" 
+  platform_arn = "arn:aws:elasticbeanstalk:us-east-1::platform/Node.js 18 running on 64bit Amazon Linux 2/5.6.6"
 
   # Configurações do ambiente
   setting {

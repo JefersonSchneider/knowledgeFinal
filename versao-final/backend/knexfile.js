@@ -45,6 +45,5 @@ const config = {
   },
 };
 
-// Exporta apenas a configuração do ambiente selecionado
-// Forçar a configuração de production
-module.exports = config.production; // Alterado para sempre usar production
+const environment = process.env.NODE_ENV || 'development';
+module.exports = config[environment];

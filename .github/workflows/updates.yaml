@@ -1,0 +1,35 @@
+name: Update Elastic Beanstalk Environment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/updates.yaml'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create ZIP for Elastic Beanstalk
+        run: |
+          cd versao-final/backend
+          zip -r ../../app.zip .
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+          application_name: knowledge-backend
+          environment_name: knowledge-backend-env
+          version_label: ${{ github.sha }}
+          region: us-east-1
+          deployment_package: app.zip

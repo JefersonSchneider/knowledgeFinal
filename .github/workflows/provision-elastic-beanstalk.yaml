@@ -1,9 +1,9 @@
 name: Provision Elastic Beanstalk
 
 on:
-  push:
-    branches:
-      - main
+  issues:
+    types:
+      - opened
     paths:
       - 'backend/**' 
       - '.github/workflows/provision-elastic-beanstalk.yaml'

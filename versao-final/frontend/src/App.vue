@@ -42,7 +42,8 @@ export default {
 				this.$router.push({ name: 'auth' })
 				return
 			}
-
+			console.log('Base URL configurada:', this.$http.defaults.baseURL); // Log da URL base
+            console.log('Enviando requisição para /validateToken com dados:', userData);
 			//const res = await axios.post(`${baseApiUrl}/validateToken`, userData)
 			const res = await this.$http.post(`/validateToken`, userData); // Use this.$http
 

@@ -10,12 +10,26 @@ require('./config/mongodb');
 app.db = db;
 app.mongoose = mongoose;
 
-// Configuração do CORS para permitir requisições do frontend
+// Configuração do CORS para permitir requisições do frontend (localhost e S3)
 app.use(cors({
-  origin: 'http://meu-vuejs-knowledge.s3-website-us-east-1.amazonaws.com',
+  origin: [
+    'http://localhost:8080', // Para desenvolvimento local
+    'http://meu-vuejs-knowledge.s3-website-us-east-1.amazonaws.com' // Para produção no S3
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Se precisar enviar cookies ou credenciais
 }));
+
+// Middleware para logar requisições e cabeçalhos CORS
+app.use((req, res, next) => {
+  console.log(`Recebendo requisição: ${req.method} ${req.url}`);
+  console.log(`Origem da requisição: ${req.headers.origin}`);
+  res.on('finish', () => {
+    console.log(`Cabeçalho CORS retornado: Access-Control-Allow-Origin = ${res.get('Access-Control-Allow-Origin')}`);
+  });
+  next();
+});
 
 // Configurações do Consign
 const consignConfig = consign()

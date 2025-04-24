@@ -43,7 +43,8 @@ export default {
 				return
 			}
 
-			const res = await axios.post(`${baseApiUrl}/validateToken`, userData)
+			//const res = await axios.post(`${baseApiUrl}/validateToken`, userData)
+			const res = await this.$http.post(`/validateToken`, userData); // Use this.$http
 
 			if (res.data) {
 				this.$store.commit('setUser', userData)

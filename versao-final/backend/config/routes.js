@@ -3,7 +3,7 @@ const admin = require('./admin');
 module.exports = app => {
   // Rotas de autenticação (comentar todas)
   // app.post('/signup', app.api.user.save)
-  // app.post('/signin', app.api.auth.signin)
+  app.post('/signin', app.api.auth.signin)
   // app.post('/validateToken', app.api.auth.validateToken)
 
   app.route('/users')

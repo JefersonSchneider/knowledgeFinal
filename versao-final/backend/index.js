@@ -14,6 +14,7 @@ app.mongoose = mongoose;
 app.use(cors({
   origin: [
     'http://localhost:8080', // Para desenvolvimento local
+    'http://192.168.3.12:8080', // Para testes na rede local
     'http://meu-vuejs-knowledge.s3-website-us-east-1.amazonaws.com' // Para produção no S3
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -47,7 +48,7 @@ if (process.env.NODE_ENV !== 'test') {
 consignConfig.into(app);
 
 if (process.env.NODE_ENV !== 'test') {
-  const PORT = process.env.PORT || 4000;
+  const PORT = process.env.PORT || 8080;
   app.listen(PORT, () => {
     console.log(`Backend executando na porta ${PORT}...`);
   });

@@ -2,21 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-variable "app_name" {
-  type    = string
-  default = "knowledge-mongodb"
-}
-
-variable "env_name" {
-  type    = string
-  default = "knowledge-mongodb-env"
-}
-
-variable "mongodb_uri" {
-  type      = string
-  sensitive = true
-}
-
 # Cria a aplicação no Elastic Beanstalk
 resource "aws_elastic_beanstalk_application" "mongodb_app" {
   name        = var.app_name
@@ -79,10 +64,4 @@ resource "aws_elastic_beanstalk_environment" "mongodb_env" {
     name      = "StreamLogs"
     value     = "true"
   }
-}
-
-# Output da URL do ambiente
-output "environment_url" {
-  value       = aws_elastic_beanstalk_environment.mongodb_env.endpoint_url
-  description = "URL do ambiente Elastic Beanstalk com MongoDB"
 }

@@ -42,7 +42,7 @@ const consignConfig = consign()
 
 // Condicionalmente carrega o diretório 'schedule' apenas se não for ambiente de teste
 if (process.env.NODE_ENV !== 'test') {
-  //consignConfig.then('./schedule');
+  consignConfig.then('./schedule');
 }
 
 consignConfig.into(app);

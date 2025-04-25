@@ -1,6 +1,6 @@
 module.exports = app => {
-    // Comentei todo o uso do MongoDB até que esteja configurado na AWS
-    /*
+    
+    
     const Stat = app.mongoose.model('Stat', {
         users: Number,
         categories: Number,
@@ -19,12 +19,12 @@ module.exports = app => {
                 res.json(stat || defaultStat);
             });
     };
-    */
 
+    /*
     // Função temporária para retornar uma mensagem enquanto o MongoDB não está configurado
     const get = (req, res) => {
         res.status(200).json({ message: 'Rota /stats desativada temporariamente até configurar o MongoDB' });
     };
-
-    return { get };
+*/
+    return { Stat, get };
 };

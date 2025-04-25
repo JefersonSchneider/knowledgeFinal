@@ -1,6 +1,12 @@
-name: Provision MongoDB on ECS
+name: Provision MongoDB Environment with Elastic Beanstalk
 
 on:
+  issues:
+    types:
+      - opened
+    paths:
+      - 'backend/**'
+      - '.github/workflows/provision-mongodb-ecs.yaml'
   workflow_dispatch:
 
 jobs:
@@ -8,36 +14,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.0
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./infra/ecs-mongodb
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./infra/ecs-mongodb
 
-      - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve \
-          -var="aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
-          -var="aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
-          -var="aws_session_token=${{ secrets.AWS_SESSION_TOKEN }}" \
-          -var="subnet_id=${{ secrets.SUBNET_ID }}" \
-          -var="security_group_id=${{ secrets.SECURITY_GROUP_ID }}"
-        working-directory: ./infra/ecs-mongodb
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -var="mongodb_uri=${{ secrets.MONGODB_URI }}"
+      working-directory: ./infra/ecs-mongodb
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-      - name: Output MongoDB Endpoint
-        run: terraform output mongodb_connection_string
-        working-directory: ./infra/ecs-mongodb
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+    - name: Output Environment URL
+      run: terraform output environment_url
+      working-directory: ./infra/ecs-mongodb
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+    - name: Create ZIP for Elastic Beanstalk
+      run: |
+        cd versao-final/backend
+        zip -r ../../app.zip .
+
+    - name: Deploy to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+        application_name: knowledge-mongodb
+        environment_name: knowledge-mongodb-env
+        version_label: ${{ github.sha }}
+        region: us-east-1
+        deployment_package: app.zip

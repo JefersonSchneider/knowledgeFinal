@@ -1,101 +1,88 @@
 provider "aws" {
-  region     = "us-east-1"
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
-  token      = var.aws_session_token
+  region = "us-east-1"
 }
 
-# Variáveis inline no mesmo arquivo
-variable "aws_access_key" {
-  type        = string
-  description = "Chave de acesso AWS"
+variable "app_name" {
+  type    = string
+  default = "knowledge-mongodb"
 }
 
-variable "aws_secret_key" {
-  type        = string
-  description = "Chave secreta AWS"
+variable "env_name" {
+  type    = string
+  default = "knowledge-mongodb-env"
 }
 
-variable "aws_session_token" {
-  type        = string
-  description = "Token de sessão temporário AWS"
+variable "mongodb_uri" {
+  type      = string
+  sensitive = true
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "ID da sub-rede pública"
+# Cria a aplicação no Elastic Beanstalk
+resource "aws_elastic_beanstalk_application" "mongodb_app" {
+  name        = var.app_name
+  description = "Aplicação backend do projeto Knowledge com MongoDB Atlas"
 }
 
-variable "security_group_id" {
-  type        = string
-  description = "ID do Security Group com porta 27017 liberada"
-}
+# Cria o ambiente no Elastic Beanstalk
+resource "aws_elastic_beanstalk_environment" "mongodb_env" {
+  name                = var.env_name
+  application         = aws_elastic_beanstalk_application.mongodb_app.name
+  solution_stack_name = "64bit Amazon Linux 2023 v6.5.1 running Node.js 22"
+  wait_for_ready_timeout = "30m"
 
-variable "cluster_name" {
-  type        = string
-  default     = "mongodb-cluster"
-}
-
-variable "container_name" {
-  type        = string
-  default     = "mongodb"
-}
-
-variable "container_port" {
-  type        = number
-  default     = 27017
-}
-
-variable "mongo_version" {
-  type        = string
-  default     = "mongo:6.0"
-}
-
-resource "aws_ecs_cluster" "cluster" {
-  name = var.cluster_name
-}
-
-resource "aws_ecs_task_definition" "mongodb_task" {
-  family                   = "mongodb-task"
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
-  execution_role_arn       = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
-
-  container_definitions = jsonencode([
-    {
-      name      = var.container_name
-      image     = var.mongo_version
-      essential = true
-      portMappings = [
-        {
-          containerPort = var.container_port
-          hostPort      = var.container_port
-        }
-      ]
-    }
-  ])
-}
-
-resource "aws_ecs_service" "mongodb_service" {
-  name            = "mongodb-service"
-  cluster         = aws_ecs_cluster.cluster.id
-  task_definition = aws_ecs_task_definition.mongodb_task.arn
-  launch_type     = "FARGATE"
-
-  network_configuration {
-    subnets          = [var.subnet_id]
-    security_groups  = [var.security_group_id]
-    assign_public_ip = true
+  # Associa o instance profile existente ao ambiente
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
+    value     = "LabInstanceProfile"
   }
 
-  desired_count = 1
+  # Configura como single instance (sem load balancer)
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "EnvironmentType"
+    value     = "SingleInstance"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "InstanceType"
+    value     = "t3.micro"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MONGODB_URI"
+    value     = var.mongodb_uri
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "PORT"
+    value     = "3000"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:asg"
+    name      = "MinSize"
+    value     = "1"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:asg"
+    name      = "MaxSize"
+    value     = "1"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "StreamLogs"
+    value     = "true"
+  }
 }
 
-data "aws_caller_identity" "current" {}
-
-output "mongodb_connection_string" {
-  value       = "mongodb://${aws_ecs_service.mongodb_service.name}.ecs.amazonaws.com:${var.container_port}"
-  description = "Connection string pública do MongoDB"
+# Output da URL do ambiente
+output "environment_url" {
+  value       = aws_elastic_beanstalk_environment.mongodb_env.endpoint_url
+  description = "URL do ambiente Elastic Beanstalk com MongoDB"
 }

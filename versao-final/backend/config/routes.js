@@ -62,4 +62,12 @@ module.exports = app => {
   app.route('/stats')
     // .all(app.config.passport.authenticate())
     .get(app.api.stat.get);
+
+  // Endpoint temporário para listar os modelos registrados no Mongoose
+  app.get('/models', (req, res) => {
+    res.json(Object.keys(app.mongoose.models));
+  });
+
+  // Adicionando o webhook para o Dialogflow
+  require('../api/webhook')(app);
 };

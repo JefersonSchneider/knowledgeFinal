@@ -75,6 +75,20 @@ export default {
             this.validatingToken = false
         }
     },
+    mounted() {
+        // Adicionar o script do Dialogflow Messenger
+        const script = document.createElement('script');
+        script.src = 'https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1';
+        script.async = true;
+        document.body.appendChild(script);
+
+        const dfMessenger = document.createElement('df-messenger');
+        dfMessenger.setAttribute('intent', 'WELCOME');
+        dfMessenger.setAttribute('chat-title', 'KnowledgeBot');
+        dfMessenger.setAttribute('agent-id', '91063194-2686-4a38-9aed-a2dcc1f7bc26');
+        dfMessenger.setAttribute('language-code', 'pt-br');
+        document.body.appendChild(dfMessenger);
+    },
     created() {
         // Comentado temporariamente para evitar a validação do token ao iniciar a aplicação
         // this.validateToken()

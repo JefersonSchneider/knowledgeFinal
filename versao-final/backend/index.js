@@ -44,7 +44,7 @@ const consignConfig = consign()
 if (process.env.NODE_ENV !== 'test') {
   consignConfig.then('./schedule');
 }
-
+console.log('Modelos registrados no Mongoose:', Object.keys(app.mongoose.models));
 consignConfig.into(app);
 
 if (process.env.NODE_ENV !== 'test') {

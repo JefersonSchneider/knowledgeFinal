@@ -40,7 +40,7 @@ const consignConfig = consign()
   .then('./api')
   .then('./config/routes.js');
 
-// Condicionalmente carrega o diretório 'schedule' apenas se não for ambiente de teste
+// Condicionalmente carrega o diretório 'schedule' apenas se não for ambiente de testes
 if (process.env.NODE_ENV !== 'test') {
   consignConfig.then('./schedule');
 }

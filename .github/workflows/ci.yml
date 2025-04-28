@@ -20,7 +20,7 @@ jobs:
 
       ####################################
       # BACKEND - EXPRESS
-      ###################################
+      ####################################
       - name: Instalar dependências do backend
         working-directory: ./versao-final/backend
         run: npm install

@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '16.20.2'
 
-      ###################################
+      ####################################
       # BACKEND - EXPRESS
       ###################################
       - name: Instalar dependências do backend
